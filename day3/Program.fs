@@ -17,24 +17,22 @@ let findSomeMul (input: string) =
     let pattern = @"do\(\)|don't\(\)|mul\(\d+,\d+\)"
     let matches = Regex.Matches(input, pattern)
 
-    let mutable isProcessing = true
     matches
     |> Seq.cast<Match>
-    |> Seq.fold (fun acc m ->
+    |> Seq.fold (fun (isProcessing, sum) m ->
         match m.Value with
-        | "do()" ->
-            isProcessing <- true
-            acc
-        | "don't()" ->
-            isProcessing <- false
-            acc
-        | _ when isProcessing && m.Value.StartsWith("mul") ->
-            let parts = Regex.Match(m.Value, @"mul\((\d+),(\d+)\)")
-            let x = int parts.Groups.[1].Value
-            let y = int parts.Groups.[2].Value
-            acc + (x * y)
-        | _ -> acc
-    ) 0
+        | "do()" -> (true, sum)
+        | "don't()" -> (false, sum)
+        | _ ->
+            if isProcessing && m.Value.StartsWith("mul") then
+                let parts = Regex.Match(m.Value, @"mul\((\d+),(\d+)\)")
+                let x = int parts.Groups.[1].Value
+                let y = int parts.Groups.[2].Value
+                (true, sum + x * y)
+            else
+                (false, sum)
+    ) (true, 0)
+    |> snd
 
 let input = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"
 
