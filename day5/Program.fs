@@ -121,7 +121,6 @@ let correctInvalidUpdates ruleMap data =
         topologicalSort pages ruleMap
     )
 
-// Find the Middle Page and Sum
 let sumMiddlePages updates =
     updates
     |> Seq.map (fun update ->
