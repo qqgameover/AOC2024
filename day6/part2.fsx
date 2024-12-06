@@ -19,26 +19,11 @@ let guard =
               if cell = '^' then yield (rowNumber, columnNumber)
     ] |> List.head
 
-
-let directionToIndex dir =
-    match dir with
-    | (-1, 0) -> 0
-    | (0, 1)  -> 1
-    | (1, 0)  -> 2
-    | (0, -1) -> 3
-    | _ -> failwith "Invalid direction"
-
-let indexToDirection idx =
-    match idx with
-    | 0 -> (-1, 0)
-    | 1 -> (0, 1)
-    | 2 -> (1, 0)
-    | 3 -> (0, -1)
-    | _ -> failwith "Invalid direction index"
+let directions = [| (-1, 0); (0, 1); (1, 0); (0, -1) |]
 
 let turnRight dir =
-    let newIndex = (directionToIndex dir + 1) % 4
-    indexToDirection newIndex
+    let newIndex = (Array.findIndex ((=) dir) directions + 1) % 4
+    directions.[newIndex]
 
 let inBounds (r, c) =
     0 <= r && r <= maxRow && 0 <= c && c <= maxColumn
@@ -62,7 +47,7 @@ let rec patrol obstacles (r, c, dir, visited, finishReason) =
         | false -> patrol obstacles (nextR, nextC, nextDir, Set.add (r, c, dir) visited, finishReason)
 
 let init: int * int * (int * int) * Set<(int * int * (int * int))> * option<string> =
-    (fst guard, snd guard, (-1, 0), Set.empty, None)
+    (fst guard, snd guard, directions.[0], Set.empty, None)
 
 let finalState = patrol obstacles init
 
