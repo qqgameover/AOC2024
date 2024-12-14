@@ -1,3 +1,4 @@
+let stopWatch = System.Diagnostics.Stopwatch.StartNew()
 open System.IO
 
 type Position = int * int
@@ -72,3 +73,5 @@ let robots =
 
 printfn "Part 2:"
 solvePart2 robots
+stopWatch.Stop()
+printfn "Execution time: %f" stopWatch.Elapsed.TotalMilliseconds

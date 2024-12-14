@@ -76,12 +76,11 @@ let moveWholeFile (disk: int[]) (fileId: int) (startPos: int) (endPos: int) =
         disk
         |> Array.mapi (fun idx block ->
             match block with
-            | b when idx >= startPos && idx <= endPos -> -1
-            | b when idx >= freeIdx && idx < freeIdx + fileSize -> fileId
+            | _ when idx >= startPos && idx <= endPos -> -1
+            | _ when idx >= freeIdx && idx < freeIdx + fileSize -> fileId
             | _ -> block
         )
 
-// Functional file movement across all files
 let moveFilesByIdWhole (disk: int[]) =
     let fileInfo = identifyFiles disk
 
@@ -90,7 +89,6 @@ let moveFilesByIdWhole (disk: int[]) =
         moveWholeFile currentDisk fileId startPos endPos
     ) disk
 
-// Checksum calculation remains the same
 let calculateChecksum disk =
     disk
     |> Array.mapi (fun index block ->
