@@ -28,15 +28,15 @@ let bounds (x, y) =
 let walk (t: int) ((p, v): Robot) : Position =
     let (px, py) = p
     let (vx, vy) = v
-    let position = (px + t * vx, py + t * vy)
-    bounds position
+    let move (px, py) = (px + t * vx, py + t * vy)
+    (move >> bounds) (px, py)
 
 let average (xs: int list) =
     (xs |> List.sum) / List.length xs
 
 let variance (xs: int list) =
     let avg = average xs
-    xs |> List.map (fun x -> (x - avg) * (x - avg)) |> average
+    xs |> Seq.fold (fun acc x -> acc + (x - avg) * (x - avg)) 0
 
 let generateTimeline (robots: Robot list) maxTime =
     [ for t in 0 .. maxTime -> robots |> List.map (walk t) ]
@@ -47,9 +47,7 @@ let findMinVariance timeline =
         let xs, ys = positions |> List.unzip
         let totalVariance = variance xs + variance ys
         (t, positions, totalVariance))
-    |> List.minBy (fun (t, _, v) ->
-                   printfn "Variance: %d, Time: %d" v t
-                   v)
+    |> List.minBy (fun (_, _, v) -> v)
 
 let printState (time: int) (robots: Position list) =
     let width, height = map
