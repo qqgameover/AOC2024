@@ -36,8 +36,6 @@ let walk (t: int) ((p, v): Robot) : Position =
     let position = (px + t * vx, py + t * vy)
     bounds position
 
-
-
 let quadrant ((width, height): Position) (x, y): Option<Quadrant> =
     match (x, y) with
     | _ when x < width / 2 && y < height / 2 -> Some Q1
@@ -55,7 +53,7 @@ let solve (robots: Robot list) =
     |> List.map snd
     |> List.reduce (*)
 
-
+//Part 1
 let result =
     File.ReadAllLines "input"
     |> Array.map parse
